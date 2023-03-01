@@ -1,0 +1,31 @@
+spring:
+  thymeleaf:
+    cache: false
+  # DataSource Config
+  datasource:
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: 429006huzhuo
+    hikari:
+      pool-name: DateHikariCP
+      minium-idle: 5
+      idle-timeout: 1000000
+      maximun-pool-size: 10
+      auto-commit: true
+      max-lifetime: 1000000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  type-aliases-package: com.example.myseckill.pojo
+
+logging:
+  level:
+    com:
+      example:
+        myseckill:
+          mapper: debug
+
