@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.myseckill.common.RespBean;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.vo.LoginVo;
-import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -16,5 +18,7 @@ import org.springframework.stereotype.Service;
  */
 public interface IUserService extends IService<User> {
 
-    RespBean doLogin(LoginVo loginVo);
+    RespBean doLogin(LoginVo loginVo, HttpServletRequest request, HttpServletResponse response);
+
+    User getUserByCookie(String userTicket, HttpServletRequest request, HttpServletResponse response);
 }
