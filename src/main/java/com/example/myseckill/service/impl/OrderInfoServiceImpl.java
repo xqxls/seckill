@@ -3,7 +3,7 @@ package com.example.myseckill.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.myseckill.common.GlobalException;
-import com.example.myseckill.enums.RespBeanEnum;
+import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.OrderInfo;
 import com.example.myseckill.mapper.OrderInfoMapper;
 import com.example.myseckill.pojo.SeckillGoods;
@@ -77,7 +77,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     @Override
     public OrderDeatilVo detail(Long orderId) {
         if (orderId == null) {
-            throw new GlobalException(RespBeanEnum.ORDER_NOT_EXIST);
+            throw new GlobalException(ResultEnum.ORDER_NOT_EXIST);
         }
         OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
         GoodsVo goodsVobyGoodsId = goodsService.findGoodsVobyGoodsId(orderInfo.getGoodsId());

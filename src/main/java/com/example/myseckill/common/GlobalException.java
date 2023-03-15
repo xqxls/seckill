@@ -1,6 +1,6 @@
 package com.example.myseckill.common;
 
-import com.example.myseckill.enums.RespBeanEnum;
+import com.example.myseckill.enums.ResultEnum;
 
 /**
  * @Description:
@@ -9,17 +9,17 @@ import com.example.myseckill.enums.RespBeanEnum;
  */
 public class GlobalException extends RuntimeException{
 
-    private RespBeanEnum respBeanEnum;
+    private ResultEnum resultEnum;
 
-    public RespBeanEnum getRespBeanEnum() {
-        return respBeanEnum;
+    public ResultEnum getResultEnum() {
+        return resultEnum;
     }
 
-    public void setRespBeanEnum(RespBeanEnum respBeanEnum) {
-        this.respBeanEnum = respBeanEnum;
+    public void setResultEnum(ResultEnum resultEnum) {
+        this.resultEnum = resultEnum;
     }
 
-    public GlobalException(RespBeanEnum respBeanEnum) {
-        this.respBeanEnum = respBeanEnum;
+    public GlobalException(ResultEnum resultEnum) {
+        this.resultEnum = resultEnum;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.myseckill.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.myseckill.common.RespBean;
+import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.vo.LoginVo;
 
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface IUserService extends IService<User> {
 
-    RespBean doLogin(LoginVo loginVo, HttpServletRequest request, HttpServletResponse response);
+    CommonResult doLogin(LoginVo loginVo, HttpServletRequest request, HttpServletResponse response);
 
     User getUserByCookie(String userTicket, HttpServletRequest request, HttpServletResponse response);
 }

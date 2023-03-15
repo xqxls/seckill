@@ -1,6 +1,6 @@
 package com.example.myseckill.controller;
 
-import com.example.myseckill.common.RespBean;
+import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.service.IUserService;
 import com.example.myseckill.vo.LoginVo;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class LoginController {
 
     @PostMapping("/doLogin")
     @ResponseBody
-    public RespBean doLogin(@Valid LoginVo loginVo, HttpServletRequest request, HttpServletResponse response){
+    public CommonResult doLogin(@Valid LoginVo loginVo, HttpServletRequest request, HttpServletResponse response){
         log.info("{}", loginVo);
         return userService.doLogin(loginVo,request,response);
     }

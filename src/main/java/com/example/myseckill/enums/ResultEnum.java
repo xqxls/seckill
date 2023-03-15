@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @Getter
-public enum RespBeanEnum {
+public enum ResultEnum {
     //通用模块
     SUCCESS(200 , "SUCCESS"),
     ERROR(500 , "服务器异常"),

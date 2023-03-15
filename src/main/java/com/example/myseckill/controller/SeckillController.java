@@ -1,7 +1,7 @@
 package com.example.myseckill.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.myseckill.enums.RespBeanEnum;
+import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.OrderInfo;
 import com.example.myseckill.pojo.SeckillOrder;
 import com.example.myseckill.pojo.User;
@@ -47,13 +47,13 @@ public class SeckillController {
         model.addAttribute("user", user);
         GoodsVo goodsVo = goodsService.findGoodsVobyGoodsId(goodsId);
         if (goodsVo.getStockCount() < 1) {
-            model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
+            model.addAttribute("errmsg", ResultEnum.EMPTY_STOCK.getMessage());
             return "secKillFail";
         }
         //判断是否重复抢购
         SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
         if (seckillOrder != null) {
-            model.addAttribute("errmsg", RespBeanEnum.REPEATE_ERROR.getMessage());
+            model.addAttribute("errmsg", ResultEnum.REPEATE_ERROR.getMessage());
             return "secKillFail";
         }
         OrderInfo orderInfo = orderService.secKill(user, goodsVo);

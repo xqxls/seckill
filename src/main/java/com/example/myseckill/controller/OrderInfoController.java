@@ -1,8 +1,8 @@
 package com.example.myseckill.controller;
 
 
-import com.example.myseckill.common.RespBean;
-import com.example.myseckill.enums.RespBeanEnum;
+import com.example.myseckill.common.CommonResult;
+import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.service.IOrderInfoService;
 import com.example.myseckill.vo.OrderDeatilVo;
@@ -32,11 +32,11 @@ public class OrderInfoController {
     @ApiOperation("订单")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
-    public RespBean detail(User user, Long orderId) {
+    public CommonResult detail(User user, Long orderId) {
         if (user == null) {
-            return RespBean.fail(RespBeanEnum.SESSION_ERROR);
+            return CommonResult.fail(ResultEnum.SESSION_ERROR);
         }
         OrderDeatilVo orderDeatilVo = orderInfoService.detail(orderId);
-        return RespBean.success(orderDeatilVo);
+        return CommonResult.success(orderDeatilVo);
     }
 }
