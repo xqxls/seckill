@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
  * @author xqxls
  * @since 2023-03-07
  */
-@Component
 public interface UserMapper extends BaseMapper<User> {
 
 }

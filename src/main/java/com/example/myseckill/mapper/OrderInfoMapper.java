@@ -1,8 +1,7 @@
 package com.example.myseckill.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.myseckill.pojo.Order;
-import org.springframework.stereotype.Component;
+import com.example.myseckill.pojo.OrderInfo;
 
 /**
  * <p>
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
  * @author xqxls
  * @since 2023-03-14
  */
-@Component
-public interface OrderMapper extends BaseMapper<Order> {
+public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
 
 }

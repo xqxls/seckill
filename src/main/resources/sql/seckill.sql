@@ -24,7 +24,7 @@ CREATE TABLE `goods`(
 )
   COMMENT '商品表';
 
-CREATE TABLE `order` (
+CREATE TABLE `orderInfo` (
                        `id` BIGINT(20) NOT NULL  AUTO_INCREMENT COMMENT '订单ID',
                        `user_id` BIGINT(20) DEFAULT NULL COMMENT '用户ID',
                        `goods_id` BIGINT(20) DEFAULT NULL COMMENT '商品ID',

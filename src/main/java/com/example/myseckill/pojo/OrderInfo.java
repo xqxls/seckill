@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * @since 2023-03-14
  */
 @ApiModel(value = "Order对象", description = "订单表")
-public class Order implements Serializable {
+public class OrderInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,10 +51,10 @@ public class Order implements Serializable {
     private Integer status;
 
     @ApiModelProperty("订单创建时间")
-    private LocalDateTime createDate;
+    private Date createDate;
 
     @ApiModelProperty("支付时间")
-    private LocalDateTime payDate;
+    private Date payDate;
 
     public Long getId() {
         return id;
@@ -119,24 +119,24 @@ public class Order implements Serializable {
     public void setStatus(Integer status) {
         this.status = status;
     }
-    public LocalDateTime getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
-    public LocalDateTime getPayDate() {
+    public Date getPayDate() {
         return payDate;
     }
 
-    public void setPayDate(LocalDateTime payDate) {
+    public void setPayDate(Date payDate) {
         this.payDate = payDate;
     }
 
     @Override
     public String toString() {
-        return "Order{" +
+        return "OrderInfo{" +
             "id=" + id +
             ", userId=" + userId +
             ", goodsId=" + goodsId +

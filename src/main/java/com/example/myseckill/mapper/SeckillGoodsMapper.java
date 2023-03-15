@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
  * @author xqxls
  * @since 2023-03-14
  */
-@Component
 public interface SeckillGoodsMapper extends BaseMapper<SeckillGoods> {
 
 }

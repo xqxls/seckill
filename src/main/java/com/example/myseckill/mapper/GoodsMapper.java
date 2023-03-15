@@ -15,7 +15,6 @@ import java.util.List;
  * @author xqxls
  * @since 2023-03-14
  */
-@Component
 public interface GoodsMapper extends BaseMapper<Goods> {
 
     List<GoodsVo> findGoodsVo();

@@ -2,6 +2,7 @@ package com.example.myseckill.controller;
 
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.service.IGoodsService;
+import com.example.myseckill.vo.GoodsVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,6 +16,7 @@ import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -72,7 +74,31 @@ public class GoodsController {
             return html;
         }
         model.addAttribute("user", user);
-        model.addAttribute("goods", goodsService.findGoodsVobyGoodsId(goodsId));
+
+        GoodsVo goodsVo = goodsService.findGoodsVobyGoodsId(goodsId);
+        Date startDate = goodsVo.getStartDate();
+        Date endDate = goodsVo.getEndDate();
+        Date nowDate = new Date();
+        //秒杀状态
+        int seckillStatus = 0;
+        //秒杀倒计时
+        int remainSeconds = 0;
+
+        if (nowDate.before(startDate)) {
+            //秒杀还未开始0
+            remainSeconds = (int) ((startDate.getTime() - nowDate.getTime()) / 1000);
+        } else if (nowDate.after(endDate)) {
+            //秒杀已经结束
+            seckillStatus = 2;
+            remainSeconds = -1;
+        } else {
+            //秒杀进行中
+            seckillStatus = 1;
+            remainSeconds = 0;
+        }
+        model.addAttribute("remainSeconds", remainSeconds);
+        model.addAttribute("seckillStatus", seckillStatus);
+        model.addAttribute("goods", goodsVo);
 
         WebContext webContext = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
         html = thymeleafViewResolver.getTemplateEngine().process("goodsDetail", webContext);
