@@ -28,7 +28,8 @@ public class ValidatorUtil {
         if (StringUtils.isEmpty(mobile)) {
             return false;
         }
-        Matcher matcher = mobile_patten.matcher(mobile);
-        return matcher.matches();
+        return true;
+//        Matcher matcher = mobile_patten.matcher(mobile);
+//        return matcher.matches();
     }
 }

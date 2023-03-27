@@ -1,5 +1,5 @@
 spring:
-  #静态资源处理
+#  #静态资源处理
 #  resources:
 #    #启动默认静态资源处理，默认启动
 #    add-mappings: true

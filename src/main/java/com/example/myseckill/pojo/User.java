@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -35,10 +35,10 @@ public class User implements Serializable {
     private String slat;
 
     @ApiModelProperty("创建时间")
-    private LocalDateTime registerDate;
+    private Date registerDate;
 
     @ApiModelProperty("最后登录时间")
-    private LocalDateTime lastLoginDate;
+    private Date lastLoginDate;
 
     @ApiModelProperty("登录次数")
     private Integer loginCount;
@@ -78,18 +78,18 @@ public class User implements Serializable {
     public void setSlat(String slat) {
         this.slat = slat;
     }
-    public LocalDateTime getRegisterDate() {
+    public Date getRegisterDate() {
         return registerDate;
     }
 
-    public void setRegisterDate(LocalDateTime registerDate) {
+    public void setRegisterDate(Date registerDate) {
         this.registerDate = registerDate;
     }
-    public LocalDateTime getLastLoginDate() {
+    public Date getLastLoginDate() {
         return lastLoginDate;
     }
 
-    public void setLastLoginDate(LocalDateTime lastLoginDate) {
+    public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
     }
     public Integer getLoginCount() {

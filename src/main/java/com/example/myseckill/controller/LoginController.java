@@ -6,8 +6,8 @@ import com.example.myseckill.vo.LoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,12 +27,12 @@ public class LoginController {
     @Autowired
     private IUserService userService;
 
-    @RequestMapping("/toLogin")
-    public String toLogin(){
+    @RequestMapping(value = "/toLogin", method = RequestMethod.GET)
+    public String toLogin() {
         return "login";
     }
 
-    @PostMapping("/doLogin")
+    @RequestMapping(value = "/doLogin", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult doLogin(@Valid LoginVo loginVo, HttpServletRequest request, HttpServletResponse response){
         log.info("{}", loginVo);
