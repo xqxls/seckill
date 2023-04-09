@@ -2,10 +2,11 @@ package com.example.myseckill.controller;
 
 import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.pojo.User;
+import com.example.myseckill.rabbitmq.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -20,9 +21,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private Provider mqSender;
+
     @RequestMapping("/info")
     @ResponseBody
     public CommonResult info(User user){
         return CommonResult.success(user);
+    }
+
+
+    @RequestMapping(value = "/mq", method = RequestMethod.GET)
+    @ResponseBody
+    public void mq() {
+        mqSender.send("Hello");
     }
 }
