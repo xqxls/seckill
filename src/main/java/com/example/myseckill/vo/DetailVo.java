@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class DetailVo {
 
 
-    private User tUser;
+    private User user;
 
     private GoodsVo goodsVo;
 

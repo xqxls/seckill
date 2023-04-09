@@ -45,23 +45,23 @@ public class UserUtil {
         }
         log.info("create user");
         // 插入数据库
-//        Connection conn = getConn();
-//        String sql = "insert into user(login_count,nickname,register_date,slat,password,id) values(?,?,?,?,?,?)";
-//        PreparedStatement statement = conn.prepareStatement(sql);
-//        for(int i=0;i<userList.size();i++){
-//            User user = userList.get(i);
-//            statement.setInt(1,user.getLoginCount());
-//            statement.setString(2,user.getNickname());
-//            statement.setTimestamp(3,  new Timestamp(user.getRegisterDate().getTime()));
-//            statement.setString(4,user.getSlat());
-//            statement.setString(5,user.getPassword());
-//            statement.setLong(6,user.getId());
-//            statement.addBatch();
-//        }
-//        statement.executeBatch();
-//        statement.clearParameters();
-//        conn.close();
-//        log.info("insert to db");
+        Connection conn = getConn();
+        String sql = "insert into user(login_count,nickname,register_date,slat,password,id) values(?,?,?,?,?,?)";
+        PreparedStatement statement = conn.prepareStatement(sql);
+        for(int i=0;i<userList.size();i++){
+            User user = userList.get(i);
+            statement.setInt(1,user.getLoginCount());
+            statement.setString(2,user.getNickname());
+            statement.setTimestamp(3,  new Timestamp(user.getRegisterDate().getTime()));
+            statement.setString(4,user.getSlat());
+            statement.setString(5,user.getPassword());
+            statement.setLong(6,user.getId());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+        statement.clearParameters();
+        conn.close();
+        log.info("insert to db");
         // 登录，生成userTicket
         String urlString = "http://localhost:8080/login/doLogin";
         File file = new File("C:\\Users\\86183\\Desktop\\config.txt");
@@ -92,7 +92,7 @@ public class UserUtil {
             String response = new String(bout.toByteArray());
             ObjectMapper mapper = new ObjectMapper();
             CommonResult commonResult = mapper.readValue(response,CommonResult.class);
-            String userTicket =(String)commonResult.getObj();
+            String userTicket =(String)commonResult.getObject();
             log.info("create userTicket:"+user.getId());
             String row = user.getId()+","+userTicket;
             raf.seek(raf.length());

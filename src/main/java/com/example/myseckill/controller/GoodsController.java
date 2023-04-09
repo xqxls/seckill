@@ -1,5 +1,6 @@
 package com.example.myseckill.controller;
 
+import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.service.IGoodsService;
 import com.example.myseckill.vo.GoodsVo;
@@ -64,8 +65,8 @@ public class GoodsController {
         return html;
     }
 
-    @ApiOperation("商品详情")
-    @RequestMapping(value = "/detail/{goodsId}", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
+    @ApiOperation("商品详情(改造前)")
+    @RequestMapping(value = "/detail1/{goodsId}", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
     @ResponseBody
     public String toDetail(Model model,User user, @PathVariable Long goodsId,HttpServletRequest request, HttpServletResponse response) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
@@ -74,7 +75,6 @@ public class GoodsController {
             return html;
         }
         model.addAttribute("user", user);
-
         GoodsVo goodsVo = goodsService.findGoodsVobyGoodsId(goodsId);
         Date startDate = goodsVo.getStartDate();
         Date endDate = goodsVo.getEndDate();
@@ -107,5 +107,12 @@ public class GoodsController {
         }
 
         return html;
+    }
+
+    @ApiOperation("商品详情")
+    @RequestMapping(value = "/detail/{goodsId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult toDetail(User user, @PathVariable Long goodsId) {
+        return CommonResult.success(goodsService.toDetail(user,goodsId));
     }
 }

@@ -1,6 +1,7 @@
 package com.example.myseckill.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.OrderInfo;
 import com.example.myseckill.pojo.SeckillOrder;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @Description:
@@ -38,8 +40,8 @@ public class SeckillController {
     @Autowired
     private ISeckillOrderService seckillOrderService;
 
-    @ApiOperation("秒杀功能")
-    @RequestMapping(value = "/doSeckill", method = RequestMethod.POST)
+    @ApiOperation("秒杀功能(改造前)")
+    @RequestMapping(value = "/doSeckill11", method = RequestMethod.POST)
     public String doSecKill2(Model model, User user, Long goodsId) {
         if(user == null){
             return "login";
@@ -60,5 +62,25 @@ public class SeckillController {
         model.addAttribute("order", orderInfo);
         model.addAttribute("goods", goodsVo);
         return "orderDetail";
+    }
+
+    @ApiOperation("秒杀功能")
+    @RequestMapping(value = "/doSeckill", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult doSecKill(User user, Long goodsId) {
+        if (user == null) {
+            return CommonResult.fail(ResultEnum.SESSION_ERROR);
+        }
+        GoodsVo goodsVo = goodsService.findGoodsVobyGoodsId(goodsId);
+        if (goodsVo.getStockCount() < 1) {
+            return CommonResult.fail(ResultEnum.EMPTY_STOCK);
+        }
+        //判断是否重复抢购
+        SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
+        if (seckillOrder != null) {
+            return CommonResult.fail(ResultEnum.REPEATE_ERROR);
+        }
+        OrderInfo orderInfo = orderService.secKill(user, goodsVo);
+        return CommonResult.success(orderInfo);
     }
 }

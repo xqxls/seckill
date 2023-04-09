@@ -1,8 +1,8 @@
 package com.example.myseckill.util;
 
-import org.thymeleaf.util.StringUtils;
 
-import java.util.regex.Matcher;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import java.util.regex.Pattern;
 
 /**
@@ -25,7 +25,7 @@ public class ValidatorUtil {
      * @return boolean
      **/
     public static boolean isMobile(String mobile) {
-        if (StringUtils.isEmpty(mobile)) {
+        if (StringUtils.isBlank(mobile)) {
             return false;
         }
         return true;

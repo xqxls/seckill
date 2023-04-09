@@ -1,6 +1,7 @@
 package com.example.myseckill.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.myseckill.common.GlobalException;
 import com.example.myseckill.enums.ResultEnum;
@@ -51,8 +52,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     public OrderInfo secKill(User user, GoodsVo goodsVo) {
         // 秒杀商品表减库存
         SeckillGoods seckillGoods = seckillGoodsService.getOne(new QueryWrapper<SeckillGoods>().eq("goods_id", goodsVo.getId()));
-        seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
-        seckillGoodsService.updateById(seckillGoods);
+//        seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
+        boolean result = seckillGoodsService.update(new UpdateWrapper<SeckillGoods>()
+                .setSql("stock_count = " + "stock_count-1")
+                .eq("goods_id",goodsVo.getId())
+                .gt("stock_count",0));
+        if(!result){
+            return null;
+        }
         //生成订单
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setUserId(user.getId());
@@ -64,7 +71,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderInfo.setOrderChannel(1);
         orderInfo.setStatus(0);
         orderInfo.setCreateDate(new Date());
-        this.baseMapper.insert(orderInfo);
+        this.save(orderInfo);
         //生成秒杀订单
         SeckillOrder seckillOrder = new SeckillOrder();
         seckillOrder.setUserId(user.getId());

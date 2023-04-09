@@ -21,4 +21,6 @@ public interface IUserService extends IService<User> {
     CommonResult doLogin(LoginVo loginVo, HttpServletRequest request, HttpServletResponse response);
 
     User getUserByCookie(String userTicket, HttpServletRequest request, HttpServletResponse response);
+
+    CommonResult updatePassword(String userTicket, String password, HttpServletRequest request, HttpServletResponse response);
 }
