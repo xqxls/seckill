@@ -6,19 +6,30 @@ import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.OrderInfo;
 import com.example.myseckill.pojo.SeckillOrder;
 import com.example.myseckill.pojo.User;
+import com.example.myseckill.rabbitmq.Provider;
 import com.example.myseckill.service.IGoodsService;
 import com.example.myseckill.service.IOrderInfoService;
 import com.example.myseckill.service.ISeckillOrderService;
+import com.example.myseckill.util.JsonUtil;
 import com.example.myseckill.vo.GoodsVo;
+import com.example.myseckill.vo.SeckillMessageVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:
@@ -29,7 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/seckill")
 @Api(value = "秒杀", tags = "秒杀")
-public class SeckillController {
+public class SeckillController implements InitializingBean {
 
     @Autowired
     private IGoodsService goodsService;
@@ -39,6 +50,14 @@ public class SeckillController {
 
     @Autowired
     private ISeckillOrderService seckillOrderService;
+
+    @Autowired
+    private Provider mqSender;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    private Map<Long, Boolean> emptyStockMap = new HashMap<>();
 
     @ApiOperation("秒杀功能(改造前)")
     @RequestMapping(value = "/doSeckill11", method = RequestMethod.POST)
@@ -71,16 +90,47 @@ public class SeckillController {
         if (user == null) {
             return CommonResult.fail(ResultEnum.SESSION_ERROR);
         }
-        GoodsVo goodsVo = goodsService.findGoodsVobyGoodsId(goodsId);
-        if (goodsVo.getStockCount() < 1) {
-            return CommonResult.fail(ResultEnum.EMPTY_STOCK);
-        }
         //判断是否重复抢购
-        SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
+        SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
         if (seckillOrder != null) {
             return CommonResult.fail(ResultEnum.REPEATE_ERROR);
         }
-        OrderInfo orderInfo = orderService.secKill(user, goodsVo);
-        return CommonResult.success(orderInfo);
+        //内存标记，减少Redis的访问
+        if (!CollectionUtils.isEmpty(emptyStockMap)&&emptyStockMap.get(goodsId)) {
+            return CommonResult.fail(ResultEnum.EMPTY_STOCK);
+        }
+        //预减库存
+        Long stock = redisTemplate.opsForValue().decrement("seckillGoods:" + goodsId);
+        if (stock < 0) {
+            emptyStockMap.put(goodsId, true);
+            redisTemplate.opsForValue().increment("seckillGoods:" + goodsId);
+            return CommonResult.fail(ResultEnum.EMPTY_STOCK);
+        }
+        SeckillMessageVo message = new SeckillMessageVo(user, goodsId);
+        mqSender.sendSeckillMessage(JsonUtil.object2JsonStr(message));
+        return CommonResult.success(0);
+    }
+
+    @ApiOperation("获取秒杀结果")
+    @GetMapping("/getResult")
+    @ResponseBody
+    public CommonResult getResult(User user, Long goodsId) {
+        if (user == null) {
+            return CommonResult.fail(ResultEnum.SESSION_ERROR);
+        }
+        Long orderId = seckillOrderService.getResult(user, goodsId);
+        return CommonResult.success(orderId);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        List<GoodsVo> list = goodsService.findGoodsVo();
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        list.forEach(goodsVo -> {
+            redisTemplate.opsForValue().set("seckillGoods:" + goodsVo.getId(), goodsVo.getStockCount());
+            emptyStockMap.put(goodsVo.getId(), false);
+        });
     }
 }

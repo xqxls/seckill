@@ -28,7 +28,7 @@ public class CommonResult {
         return new CommonResult(resultEnum.getCode(), resultEnum.getMessage(),null);
     }
 
-    public static CommonResult error(ResultEnum resultEnum, Object object) {
+    public static CommonResult fail(ResultEnum resultEnum, Object object) {
         return new CommonResult(resultEnum.getCode(), resultEnum.getMessage(), object);
     }
 

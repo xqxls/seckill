@@ -52,12 +52,15 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     public OrderInfo secKill(User user, GoodsVo goodsVo) {
         // 秒杀商品表减库存
         SeckillGoods seckillGoods = seckillGoodsService.getOne(new QueryWrapper<SeckillGoods>().eq("goods_id", goodsVo.getId()));
-//        seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
-        boolean result = seckillGoodsService.update(new UpdateWrapper<SeckillGoods>()
+        seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
+        seckillGoodsService.update(new UpdateWrapper<SeckillGoods>()
                 .setSql("stock_count = " + "stock_count-1")
                 .eq("goods_id",goodsVo.getId())
                 .gt("stock_count",0));
-        if(!result){
+
+        if (seckillGoods.getStockCount() < 1) {
+            //判断是否还有库存
+            redisTemplate.opsForValue().set("isStockEmpty:" + goodsVo.getId(), "0");
             return null;
         }
         //生成订单
@@ -78,6 +81,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         seckillOrder.setOrderId(orderInfo.getId());
         seckillOrder.setGoodsId(goodsVo.getId());
         seckillOrderService.save(seckillOrder);
+        redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goodsVo.getId(), seckillOrder);
         return orderInfo;
     }
 
