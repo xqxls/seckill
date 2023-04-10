@@ -43,7 +43,7 @@ CREATE TABLE `orderInfo` (
 CREATE TABLE `seckill_goods`(
                               `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '秒杀商品ID',
                               `goods_id` BIGINT(20) NOT NULL COMMENT '商品ID',
-                              `seckill_price` DECIMAL(10,2) NOT NULL COMMENT '秒杀家',
+                              `sec_kill_price` DECIMAL(10,2) NOT NULL COMMENT '秒杀家',
                               `stock_count` INT(10) NOT NULL  COMMENT '库存数量',
                               `start_date` datetime NOT NULL  COMMENT '秒杀开始时间',
                               `end_date` datetime NOT NULL COMMENT '秒杀结束时间',
