@@ -1,7 +1,7 @@
 package com.example.myseckill.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.myseckill.pojo.SeckillGoods;
+import com.example.myseckill.pojo.SecKillGoods;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.example.myseckill.pojo.SeckillGoods;
  * @author xqxls
  * @since 2023-03-14
  */
-public interface ISeckillGoodsService extends IService<SeckillGoods> {
+public interface ISeckillGoodsService extends IService<SecKillGoods> {
 
 }

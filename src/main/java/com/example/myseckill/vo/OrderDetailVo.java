@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
  *
  * @author: LC
  * @date 2022/3/6 10:20 下午
- * @ClassName: OrderDeatilVo
+ * @ClassName: OrderDetailVo
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDeatilVo {
+public class OrderDetailVo {
 
     private OrderInfo orderInfo;
 

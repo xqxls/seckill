@@ -5,7 +5,7 @@ import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.service.IOrderInfoService;
-import com.example.myseckill.vo.OrderDeatilVo;
+import com.example.myseckill.vo.OrderDetailVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,7 +36,7 @@ public class OrderInfoController {
         if (user == null) {
             return CommonResult.fail(ResultEnum.SESSION_ERROR);
         }
-        OrderDeatilVo orderDeatilVo = orderInfoService.detail(orderId);
-        return CommonResult.success(orderDeatilVo);
+        OrderDetailVo orderDetailVo = orderInfoService.detail(orderId);
+        return CommonResult.success(orderDetailVo);
     }
 }

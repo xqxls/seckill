@@ -35,13 +35,13 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public GoodsVo findGoodsVobyGoodsId(Long goodsId) {
-        return goodsMapper.findGoodsVobyGoodsId(goodsId);
+    public GoodsVo findGoodsVoByGoodsId(Long goodsId) {
+        return goodsMapper.findGoodsVoByGoodsId(goodsId);
     }
 
     @Override
     public DetailVo toDetail(User user, Long goodsId) {
-        GoodsVo goodsVo = this.findGoodsVobyGoodsId(goodsId);
+        GoodsVo goodsVo = this.findGoodsVoByGoodsId(goodsId);
         //秒杀状态
         int seckillStatus = 0;
         //秒杀倒计时

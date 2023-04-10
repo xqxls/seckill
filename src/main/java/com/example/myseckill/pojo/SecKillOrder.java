@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @TableName("seckill_order")
 @ApiModel(value = "SeckillOrder对象", description = "秒杀订单表")
-public class SeckillOrder implements Serializable {
+public class SecKillOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,7 +66,7 @@ public class SeckillOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "SeckillOrder{" +
+        return "SecKillOrder{" +
             "id=" + id +
             ", userId=" + userId +
             ", orderId=" + orderId +

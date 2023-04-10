@@ -75,7 +75,7 @@ public class GoodsController {
             return html;
         }
         model.addAttribute("user", user);
-        GoodsVo goodsVo = goodsService.findGoodsVobyGoodsId(goodsId);
+        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(goodsId);
         Date startDate = goodsVo.getStartDate();
         Date endDate = goodsVo.getEndDate();
         Date nowDate = new Date();

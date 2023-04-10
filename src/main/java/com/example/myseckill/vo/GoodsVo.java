@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -20,7 +19,7 @@ public class GoodsVo extends Goods {
      * 秒杀价格
      **/
     @ApiModelProperty("秒杀价格")
-    private BigDecimal seckillPrice;
+    private BigDecimal secKillPrice;
 
     /**
      * 剩余数量
@@ -40,12 +39,12 @@ public class GoodsVo extends Goods {
     @ApiModelProperty("结束时间")
     private Date endDate;
 
-    public BigDecimal getSeckillPrice() {
-        return seckillPrice;
+    public BigDecimal getSecKillPrice() {
+        return secKillPrice;
     }
 
-    public void setSeckillPrice(BigDecimal seckillPrice) {
-        this.seckillPrice = seckillPrice;
+    public void setSecKillPrice(BigDecimal secKillPrice) {
+        this.secKillPrice = secKillPrice;
     }
 
     public Integer getStockCount() {

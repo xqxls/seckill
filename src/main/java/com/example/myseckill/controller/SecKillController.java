@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.OrderInfo;
-import com.example.myseckill.pojo.SeckillOrder;
+import com.example.myseckill.pojo.SecKillOrder;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.rabbitmq.Provider;
 import com.example.myseckill.service.IGoodsService;
@@ -12,7 +12,7 @@ import com.example.myseckill.service.IOrderInfoService;
 import com.example.myseckill.service.ISeckillOrderService;
 import com.example.myseckill.util.JsonUtil;
 import com.example.myseckill.vo.GoodsVo;
-import com.example.myseckill.vo.SeckillMessageVo;
+import com.example.myseckill.vo.SecKillMessageVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/seckill")
 @Api(value = "秒杀", tags = "秒杀")
-public class SeckillController implements InitializingBean {
+public class SecKillController implements InitializingBean {
 
     @Autowired
     private IGoodsService goodsService;
@@ -66,13 +66,13 @@ public class SeckillController implements InitializingBean {
             return "login";
         }
         model.addAttribute("user", user);
-        GoodsVo goodsVo = goodsService.findGoodsVobyGoodsId(goodsId);
+        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(goodsId);
         if (goodsVo.getStockCount() < 1) {
             model.addAttribute("errmsg", ResultEnum.EMPTY_STOCK.getMessage());
             return "secKillFail";
         }
         //判断是否重复抢购
-        SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
+        SecKillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SecKillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
         if (seckillOrder != null) {
             model.addAttribute("errmsg", ResultEnum.REPEATE_ERROR.getMessage());
             return "secKillFail";
@@ -91,7 +91,7 @@ public class SeckillController implements InitializingBean {
             return CommonResult.fail(ResultEnum.SESSION_ERROR);
         }
         //判断是否重复抢购
-        SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
+        SecKillOrder seckillOrder = (SecKillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
         if (seckillOrder != null) {
             return CommonResult.fail(ResultEnum.REPEATE_ERROR);
         }
@@ -106,7 +106,7 @@ public class SeckillController implements InitializingBean {
             redisTemplate.opsForValue().increment("seckillGoods:" + goodsId);
             return CommonResult.fail(ResultEnum.EMPTY_STOCK);
         }
-        SeckillMessageVo message = new SeckillMessageVo(user, goodsId);
+        SecKillMessageVo message = new SecKillMessageVo(user, goodsId);
         mqSender.sendSeckillMessage(JsonUtil.object2JsonStr(message));
         return CommonResult.success(0);
     }

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  */
 @TableName("seckill_goods")
 @ApiModel(value = "SeckillGoods对象", description = "秒杀商品表")
-public class SeckillGoods implements Serializable {
+public class SecKillGoods implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,8 +31,8 @@ public class SeckillGoods implements Serializable {
     @ApiModelProperty("商品ID")
     private Long goodsId;
 
-    @ApiModelProperty("秒杀家")
-    private BigDecimal seckillPrice;
+    @ApiModelProperty("秒杀价")
+    private BigDecimal secKillPrice;
 
     @ApiModelProperty("库存数量")
     private Integer stockCount;
@@ -57,12 +57,12 @@ public class SeckillGoods implements Serializable {
     public void setGoodsId(Long goodsId) {
         this.goodsId = goodsId;
     }
-    public BigDecimal getSeckillPrice() {
-        return seckillPrice;
+    public BigDecimal getSecKillPrice() {
+        return secKillPrice;
     }
 
-    public void setSeckillPrice(BigDecimal seckillPrice) {
-        this.seckillPrice = seckillPrice;
+    public void setSecKillPrice(BigDecimal secKillPrice) {
+        this.secKillPrice = secKillPrice;
     }
     public Integer getStockCount() {
         return stockCount;
@@ -88,10 +88,10 @@ public class SeckillGoods implements Serializable {
 
     @Override
     public String toString() {
-        return "SeckillGoods{" +
+        return "SecKillGoods{" +
             "id=" + id +
             ", goodsId=" + goodsId +
-            ", seckillPrice=" + seckillPrice +
+            ", secKillPrice=" + secKillPrice +
             ", stockCount=" + stockCount +
             ", startDate=" + startDate +
             ", endDate=" + endDate +

@@ -7,15 +7,15 @@ import com.example.myseckill.common.GlobalException;
 import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.OrderInfo;
 import com.example.myseckill.mapper.OrderInfoMapper;
-import com.example.myseckill.pojo.SeckillGoods;
-import com.example.myseckill.pojo.SeckillOrder;
+import com.example.myseckill.pojo.SecKillGoods;
+import com.example.myseckill.pojo.SecKillOrder;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.service.IGoodsService;
 import com.example.myseckill.service.IOrderInfoService;
 import com.example.myseckill.service.ISeckillGoodsService;
 import com.example.myseckill.service.ISeckillOrderService;
 import com.example.myseckill.vo.GoodsVo;
-import com.example.myseckill.vo.OrderDeatilVo;
+import com.example.myseckill.vo.OrderDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -51,14 +51,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     @Override
     public OrderInfo secKill(User user, GoodsVo goodsVo) {
         // 秒杀商品表减库存
-        SeckillGoods seckillGoods = seckillGoodsService.getOne(new QueryWrapper<SeckillGoods>().eq("goods_id", goodsVo.getId()));
-        seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
-        seckillGoodsService.update(new UpdateWrapper<SeckillGoods>()
+        SecKillGoods secKillGoods = seckillGoodsService.getOne(new QueryWrapper<SecKillGoods>().eq("goods_id", goodsVo.getId()));
+        secKillGoods.setStockCount(secKillGoods.getStockCount() - 1);
+        seckillGoodsService.update(new UpdateWrapper<SecKillGoods>()
                 .setSql("stock_count = " + "stock_count-1")
                 .eq("goods_id",goodsVo.getId())
                 .gt("stock_count",0));
 
-        if (seckillGoods.getStockCount() < 1) {
+        if (secKillGoods.getStockCount() < 1) {
             //判断是否还有库存
             redisTemplate.opsForValue().set("isStockEmpty:" + goodsVo.getId(), "0");
             return null;
@@ -70,13 +70,13 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderInfo.setDeliveryAddrId(0L);
         orderInfo.setGoodsName(goodsVo.getGoodsName());
         orderInfo.setGoodsCount(1);
-        orderInfo.setGoodsPrice(seckillGoods.getSeckillPrice());
+        orderInfo.setGoodsPrice(secKillGoods.getSecKillPrice());
         orderInfo.setOrderChannel(1);
         orderInfo.setStatus(0);
         orderInfo.setCreateDate(new Date());
         this.save(orderInfo);
         //生成秒杀订单
-        SeckillOrder seckillOrder = new SeckillOrder();
+        SecKillOrder seckillOrder = new SecKillOrder();
         seckillOrder.setUserId(user.getId());
         seckillOrder.setOrderId(orderInfo.getId());
         seckillOrder.setGoodsId(goodsVo.getId());
@@ -86,15 +86,15 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     @Override
-    public OrderDeatilVo detail(Long orderId) {
+    public OrderDetailVo detail(Long orderId) {
         if (orderId == null) {
             throw new GlobalException(ResultEnum.ORDER_NOT_EXIST);
         }
         OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
-        GoodsVo goodsVobyGoodsId = goodsService.findGoodsVobyGoodsId(orderInfo.getGoodsId());
-        OrderDeatilVo orderDeatilVo = new OrderDeatilVo();
-        orderDeatilVo.setOrderInfo(orderInfo);
-        orderDeatilVo.setGoodsVo(goodsVobyGoodsId);
-        return orderDeatilVo;
+        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(orderInfo.getGoodsId());
+        OrderDetailVo orderDetailVo = new OrderDetailVo();
+        orderDetailVo.setOrderInfo(orderInfo);
+        orderDetailVo.setGoodsVo(goodsVo);
+        return orderDetailVo;
     }
 }

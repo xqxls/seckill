@@ -1,8 +1,8 @@
 package com.example.myseckill.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.myseckill.pojo.SeckillGoods;
-import com.example.myseckill.mapper.SeckillGoodsMapper;
+import com.example.myseckill.pojo.SecKillGoods;
+import com.example.myseckill.mapper.SecKillGoodsMapper;
 import com.example.myseckill.service.ISeckillGoodsService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Primary
-public class SeckillGoodsServiceImpl extends ServiceImpl<SeckillGoodsMapper, SeckillGoods> implements ISeckillGoodsService {
+public class SeckillGoodsServiceImpl extends ServiceImpl<SecKillGoodsMapper, SecKillGoods> implements ISeckillGoodsService {
 
 }

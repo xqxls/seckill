@@ -20,7 +20,7 @@ public interface IGoodsService extends IService<Goods> {
 
     List<GoodsVo> findGoodsVo();
 
-    GoodsVo findGoodsVobyGoodsId(Long goodsId);
+    GoodsVo findGoodsVoByGoodsId(Long goodsId);
 
     DetailVo toDetail(User user, Long goodsId);
 }

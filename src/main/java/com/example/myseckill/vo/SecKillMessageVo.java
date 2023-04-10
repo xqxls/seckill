@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SeckillMessageVo implements Serializable {
+public class SecKillMessageVo implements Serializable {
 
     private final Long uid = 1L;
 

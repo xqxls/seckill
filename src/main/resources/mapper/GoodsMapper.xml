@@ -20,7 +20,7 @@
                g.goods_img,
                g.goods_price,
                g.goods_stock,
-               sg.seckill_price,
+               sg.sec_kill_price,
                sg.stock_count,
                sg.start_date,
                sg.end_date
@@ -28,14 +28,14 @@
                  LEFT JOIN seckill_goods sg on g.id = sg.goods_id
     </select>
 
-    <select id="findGoodsVobyGoodsId" resultType="com.example.myseckill.vo.GoodsVo">
+    <select id="findGoodsVoByGoodsId" resultType="com.example.myseckill.vo.GoodsVo">
         SELECT g.id,
                g.goods_name,
                g.goods_title,
                g.goods_img,
                g.goods_price,
                g.goods_stock,
-               sg.seckill_price,
+               sg.sec_kill_price,
                sg.stock_count,
                sg.start_date,
                sg.end_date
