@@ -117,4 +117,13 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         String redisPath = (String) redisTemplate.opsForValue().get("seckillPath:" + user.getId() + ":" + goodsId);
         return path.equals(redisPath);
     }
+
+    @Override
+    public boolean checkCaptcha(User user, Long goodsId, String captcha) {
+        if (user == null || goodsId < 0 || StringUtils.isEmpty(captcha)) {
+            return false;
+        }
+        String redisCaptcha = (String) redisTemplate.opsForValue().get("captcha:" + user.getId() + ":" + goodsId);
+        return captcha.equals(redisCaptcha);
+    }
 }

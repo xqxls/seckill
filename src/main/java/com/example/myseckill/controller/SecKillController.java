@@ -2,6 +2,7 @@ package com.example.myseckill.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.myseckill.common.CommonResult;
+import com.example.myseckill.common.GlobalException;
 import com.example.myseckill.enums.ResultEnum;
 import com.example.myseckill.pojo.OrderInfo;
 import com.example.myseckill.pojo.SecKillOrder;
@@ -13,6 +14,7 @@ import com.example.myseckill.service.ISeckillOrderService;
 import com.example.myseckill.util.JsonUtil;
 import com.example.myseckill.vo.GoodsVo;
 import com.example.myseckill.vo.SecKillMessageVo;
+import com.wf.captcha.ArithmeticCaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +28,13 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description:
@@ -137,13 +142,33 @@ public class SecKillController implements InitializingBean {
         if (user == null) {
             return CommonResult.fail(ResultEnum.SESSION_ERROR);
         }
-
-//        boolean check = orderService.checkCaptcha(user, goodsId, captcha);
-//        if (!check) {
-//            return CommonResult.fail(ResultEnum.ERROR_CAPTCHA);
-//        }
+        boolean check = orderService.checkCaptcha(user, goodsId, captcha);
+        if (!check) {
+            return CommonResult.fail(ResultEnum.ERROR_CAPTCHA);
+        }
         String str = orderService.createPath(user, goodsId);
         return CommonResult.success(str);
+    }
+
+    @ApiOperation("获取验证码")
+    @GetMapping(value = "/captcha")
+    public void verifyCode(User user, Long goodsId, HttpServletResponse response) {
+        if (user == null || goodsId < 0) {
+            throw new GlobalException(ResultEnum.REQUEST_ILLEGAL);
+        }
+        //设置请求头为输出图片的类型
+        response.setContentType("image/jpg");
+        response.setHeader("Pargam", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+        //生成验证码
+        ArithmeticCaptcha captcha = new ArithmeticCaptcha(130, 32, 3);
+        redisTemplate.opsForValue().set("captcha:" + user.getId() + ":" + goodsId, captcha.text(), 300, TimeUnit.SECONDS);
+        try {
+            captcha.out(response.getOutputStream());
+        } catch (IOException e) {
+            log.error("验证码生成失败", e.getMessage());
+        }
     }
 
     @Override
