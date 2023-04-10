@@ -19,4 +19,9 @@ public interface IOrderInfoService extends IService<OrderInfo> {
     OrderInfo secKill(User user, GoodsVo goodsVo);
 
     OrderDetailVo detail(Long orderId);
+
+    String createPath(User user, Long goodsId);
+
+    boolean checkPath(User user, Long goodsId, String path);
+
 }

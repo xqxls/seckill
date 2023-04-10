@@ -23,11 +23,9 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -89,22 +87,27 @@ public class SecKillController implements InitializingBean {
     }
 
     @ApiOperation("秒杀功能")
-    @RequestMapping(value = "/doSeckill", method = RequestMethod.POST)
+    @RequestMapping(value = "/{path}/doSeckill", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult doSecKill(User user, Long goodsId) {
+    public CommonResult doSecKill(@PathVariable String path,User user, Long goodsId) {
         if (user == null) {
             return CommonResult.fail(ResultEnum.SESSION_ERROR);
         }
-        //判断是否重复抢购
+        // 校验秒杀地址
+        boolean check = orderService.checkPath(user, goodsId, path);
+        if (!check) {
+            return CommonResult.fail(ResultEnum.REQUEST_ILLEGAL);
+        }
+        // 判断是否重复抢购
         SecKillOrder seckillOrder = (SecKillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
         if (seckillOrder != null) {
             return CommonResult.fail(ResultEnum.REPEATE_ERROR);
         }
-        //内存标记，减少Redis的访问
+        // 内存标记，减少Redis的访问
         if (!CollectionUtils.isEmpty(emptyStockMap)&&emptyStockMap.get(goodsId)) {
             return CommonResult.fail(ResultEnum.EMPTY_STOCK);
         }
-        //预减库存
+        // 预减库存
         Long stock = (Long) redisTemplate.execute(redisScript, Collections.singletonList("seckillGoods:" + goodsId), Collections.EMPTY_LIST);
         if (stock != null && stock < 0) {
             emptyStockMap.put(goodsId, true);
@@ -125,6 +128,22 @@ public class SecKillController implements InitializingBean {
         }
         Long orderId = seckillOrderService.getResult(user, goodsId);
         return CommonResult.success(orderId);
+    }
+
+    @ApiOperation("获取秒杀地址")
+    @GetMapping(value = "/path")
+    @ResponseBody
+    public CommonResult getPath(User user, Long goodsId, String captcha, HttpServletRequest request) {
+        if (user == null) {
+            return CommonResult.fail(ResultEnum.SESSION_ERROR);
+        }
+
+//        boolean check = orderService.checkCaptcha(user, goodsId, captcha);
+//        if (!check) {
+//            return CommonResult.fail(ResultEnum.ERROR_CAPTCHA);
+//        }
+        String str = orderService.createPath(user, goodsId);
+        return CommonResult.success(str);
     }
 
     @Override

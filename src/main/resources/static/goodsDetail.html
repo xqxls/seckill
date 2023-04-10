@@ -42,7 +42,7 @@
                         <!--<img id="captchaImg" width="130" height="32" onclick="refreshCaptcha()" style="display: none">-->
                         <!--<input id="captcha" class="form-control" style="display: none">-->
                         <button class="btn btn-primary" type="submit" id="buyButton"
-                                onclick="doSecKill()">立即秒杀
+                                onclick="getSeckillPath()">立即秒杀
                             <input type="hidden" name="goodsId" id="goodsId">
                         </button>
                     </div>
@@ -101,9 +101,9 @@
 
 
     //秒杀方法
-    function doSecKill() {
+    function doSecKill(path) {
         $.ajax({
-            url: 'seckill/doSeckill',
+            url: 'seckill/'+ path +'/doSeckill',
             type: "POST",
             data: {
                 goodsId: $('#goodsId').val()
