@@ -1,5 +1,6 @@
 package com.example.myseckill.config;
 
+import com.example.myseckill.access.AccessLimitInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -24,6 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private UserArgumentResolver userArgumentResolver;
 
+    @Autowired
+    private AccessLimitInterceptor accessLimitInterceptor;
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 //        WebMvcConfigurer.super.addArgumentResolvers(resolvers);
@@ -40,4 +44,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(accessLimitInterceptor);
+    }
 }

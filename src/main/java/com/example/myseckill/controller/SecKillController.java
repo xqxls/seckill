@@ -1,10 +1,9 @@
 package com.example.myseckill.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.myseckill.access.AccessLimit;
 import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.common.GlobalException;
 import com.example.myseckill.enums.ResultEnum;
-import com.example.myseckill.pojo.OrderInfo;
 import com.example.myseckill.pojo.SecKillOrder;
 import com.example.myseckill.pojo.User;
 import com.example.myseckill.rabbitmq.Provider;
@@ -21,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,30 +65,6 @@ public class SecKillController implements InitializingBean {
     private RedisScript<Long> redisScript;
 
     private Map<Long, Boolean> emptyStockMap = new HashMap<>();
-
-    @ApiOperation("秒杀功能(改造前)")
-    @RequestMapping(value = "/doSeckill11", method = RequestMethod.POST)
-    public String doSecKill2(Model model, User user, Long goodsId) {
-        if(user == null){
-            return "login";
-        }
-        model.addAttribute("user", user);
-        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(goodsId);
-        if (goodsVo.getStockCount() < 1) {
-            model.addAttribute("errmsg", ResultEnum.EMPTY_STOCK.getMessage());
-            return "secKillFail";
-        }
-        //判断是否重复抢购
-        SecKillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SecKillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
-        if (seckillOrder != null) {
-            model.addAttribute("errmsg", ResultEnum.REPEATE_ERROR.getMessage());
-            return "secKillFail";
-        }
-        OrderInfo orderInfo = orderService.secKill(user, goodsVo);
-        model.addAttribute("order", orderInfo);
-        model.addAttribute("goods", goodsVo);
-        return "orderDetail";
-    }
 
     @ApiOperation("秒杀功能")
     @RequestMapping(value = "/{path}/doSeckill", method = RequestMethod.POST)
@@ -136,12 +111,16 @@ public class SecKillController implements InitializingBean {
     }
 
     @ApiOperation("获取秒杀地址")
+    @AccessLimit(second = 5, maxCount = 5)
     @GetMapping(value = "/path")
     @ResponseBody
-    public CommonResult getPath(User user, Long goodsId, String captcha, HttpServletRequest request) {
+    public CommonResult getPath(User user, Long goodsId, String captcha,HttpServletRequest request) {
         if (user == null) {
             return CommonResult.fail(ResultEnum.SESSION_ERROR);
         }
+//        if (accessLimit(user, request)){
+//            return CommonResult.fail(ResultEnum.ACCESS_LIMIT_REACHED);
+//        }
         boolean check = orderService.checkCaptcha(user, goodsId, captcha);
         if (!check) {
             return CommonResult.fail(ResultEnum.ERROR_CAPTCHA);
@@ -149,6 +128,22 @@ public class SecKillController implements InitializingBean {
         String str = orderService.createPath(user, goodsId);
         return CommonResult.success(str);
     }
+
+    private boolean accessLimit(User user, HttpServletRequest request) {
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        // 限制访问次数，5秒内访问5次
+        String uri = request.getRequestURI();
+        Integer count = (Integer) valueOperations.get(uri + ":" + user.getId());
+        if (count == null) {
+            valueOperations.set(uri + ":" + user.getId(), 1, 5, TimeUnit.SECONDS);
+        } else if (count < 5) {
+            valueOperations.increment(uri + ":" + user.getId());
+        } else {
+            return true;
+        }
+        return false;
+    }
+
 
     @ApiOperation("获取验证码")
     @GetMapping(value = "/captcha")

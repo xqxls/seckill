@@ -2,9 +2,15 @@ package com.example.myseckill.util;
 
 import com.example.myseckill.common.CommonResult;
 import com.example.myseckill.pojo.User;
+import com.example.myseckill.service.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,7 +28,15 @@ import java.util.List;
  * @Date: Created in 2023/3/27 21:37
  */
 @Slf4j
+@Component
 public class UserUtil {
+
+    private static IUserService userService;
+
+    @Autowired
+    UserUtil(IUserService userService){
+        UserUtil.userService = userService;
+    }
 
     final static int count = 1000;
 
@@ -111,5 +125,13 @@ public class UserUtil {
         String driver = "com.mysql.cj.jdbc.Driver";
         Class.forName(driver);
         return DriverManager.getConnection(url,username,password);
+    }
+
+    public static User getUser(HttpServletRequest request, HttpServletResponse response){
+        String userTicket = CookieUtil.getCookieValue(request, "userTicket");
+        if (StringUtils.isEmpty(userTicket)) {
+            return null;
+        }
+        return userService.getUserByCookie(userTicket, request, response);
     }
 }
