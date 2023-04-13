@@ -24,26 +24,26 @@ CREATE TABLE `goods`(
 )
   COMMENT '商品表';
 
-CREATE TABLE `orderInfo` (
-                       `id` BIGINT(20) NOT NULL  AUTO_INCREMENT COMMENT '订单ID',
-                       `user_id` BIGINT(20) DEFAULT NULL COMMENT '用户ID',
-                       `goods_id` BIGINT(20) DEFAULT NULL COMMENT '商品ID',
-                       `delivery_addr_id` BIGINT(20) DEFAULT NULL  COMMENT '收获地址ID',
-                       `goods_name` VARCHAR(16) DEFAULT NULL  COMMENT '商品名字',
-                       `goods_count` INT(20) DEFAULT '0'  COMMENT '商品数量',
-                       `goods_price` DECIMAL(10,2) DEFAULT '0.00'  COMMENT '商品价格',
-                       `order_channel` TINYINT(4) DEFAULT '0'  COMMENT '1 pc,2 android, 3 ios',
-                       `status` TINYINT(4) DEFAULT '0'  COMMENT '订单状态，0新建未支付，1已支付，2已发货，3已收货，4已退货，5已完成',
-                       `create_date` datetime DEFAULT NULL  COMMENT '订单创建时间',
-                       `pay_date` datetime DEFAULT NULL  COMMENT '支付时间',
-                       PRIMARY KEY(`id`)
+CREATE TABLE `order_info` (
+                            `id` BIGINT(20) NOT NULL  AUTO_INCREMENT COMMENT '订单ID',
+                            `user_id` BIGINT(20) DEFAULT NULL COMMENT '用户ID',
+                            `goods_id` BIGINT(20) DEFAULT NULL COMMENT '商品ID',
+                            `delivery_addr_id` BIGINT(20) DEFAULT NULL  COMMENT '收获地址ID',
+                            `goods_name` VARCHAR(16) DEFAULT NULL  COMMENT '商品名字',
+                            `goods_count` INT(20) DEFAULT '0'  COMMENT '商品数量',
+                            `goods_price` DECIMAL(10,2) DEFAULT '0.00'  COMMENT '商品价格',
+                            `order_channel` TINYINT(4) DEFAULT '0'  COMMENT '1 pc,2 android, 3 ios',
+                            `status` TINYINT(4) DEFAULT '0'  COMMENT '订单状态，0新建未支付，1已支付，2已发货，3已收货，4已退货，5已完成',
+                            `create_date` datetime DEFAULT NULL  COMMENT '订单创建时间',
+                            `pay_date` datetime DEFAULT NULL  COMMENT '支付时间',
+                            PRIMARY KEY(`id`)
 )ENGINE = INNODB AUTO_INCREMENT=12 DEFAULT CHARSET = utf8mb4
   COMMENT '订单表';
 
 CREATE TABLE `seckill_goods`(
                               `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '秒杀商品ID',
                               `goods_id` BIGINT(20) NOT NULL COMMENT '商品ID',
-                              `seckill_price` DECIMAL(10,2) NOT NULL COMMENT '秒杀家',
+                              `sec_kill_price` DECIMAL(10,2) NOT NULL COMMENT '秒杀家',
                               `stock_count` INT(10) NOT NULL  COMMENT '库存数量',
                               `start_date` datetime NOT NULL  COMMENT '秒杀开始时间',
                               `end_date` datetime NOT NULL COMMENT '秒杀结束时间',
@@ -65,3 +65,12 @@ insert into `goods` VALUES(2,'IPHONE12 PRO','IPHONE12 PRO 128GB','/img/iphone12p
 
 insert into `seckill_goods` VALUES(1,1,'629',10,'2023-02-14 08:00:00','2023-02-14 09:00:00');
 insert into `seckill_goods` VALUES(2,2,'929',10,'2023-02-14 08:00:00','2023-02-14 09:00:00');
+
+-- 添加索引
+ALTER TABLE `seckill`.`seckill_order`
+  ADD UNIQUE INDEX `seckill_uid_gid`(user_id, goods_id) USING BTREE COMMENT '用户ID+商品ID成为唯一索引，';
+
+-- 秒杀操作回滚
+DELETE FROM order_info;
+DELETE FROM seckill_order;
+UPDATE seckill_goods SET stock_count=10;
