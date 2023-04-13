@@ -24,7 +24,7 @@ CREATE TABLE `goods`(
 )
   COMMENT '商品表';
 
-CREATE TABLE `orderInfo` (
+CREATE TABLE `order_info` (
                        `id` BIGINT(20) NOT NULL  AUTO_INCREMENT COMMENT '订单ID',
                        `user_id` BIGINT(20) DEFAULT NULL COMMENT '用户ID',
                        `goods_id` BIGINT(20) DEFAULT NULL COMMENT '商品ID',
@@ -65,3 +65,12 @@ insert into `goods` VALUES(2,'IPHONE12 PRO','IPHONE12 PRO 128GB','/img/iphone12p
 
 insert into `seckill_goods` VALUES(1,1,'629',10,'2023-02-14 08:00:00','2023-02-14 09:00:00');
 insert into `seckill_goods` VALUES(2,2,'929',10,'2023-02-14 08:00:00','2023-02-14 09:00:00');
+
+-- 添加索引
+ALTER TABLE `seckill`.`seckill_order`
+  ADD UNIQUE INDEX `seckill_uid_gid`(user_id, goods_id) USING BTREE COMMENT '用户ID+商品ID成为唯一索引，';
+
+-- 秒杀操作回滚
+DELETE FROM order_info;
+DELETE FROM seckill_order;
+UPDATE seckill_goods SET stock_count=10;
