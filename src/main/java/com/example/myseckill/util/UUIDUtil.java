@@ -5,9 +5,8 @@ import java.util.UUID;
 /**
  * UUID工具类
  *
- * @author: LC
- * @date 2022/3/2 5:46 下午
- * @ClassName: UUIDUtil
+ * @Author: huzhuo
+ * @Date: Created in 2023/4/12 22:06
  */
 public class UUIDUtil {
 
