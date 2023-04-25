@@ -13,9 +13,8 @@ import java.util.List;
 /**
  * MVC配置类
  *
- * @author: LC
- * @date 2022/3/3 2:37 下午
- * @ClassName: WebConfig
+ * @Author: huzhuo
+ * @Date: Created in 2023/3/8 22:03
  */
 @Configuration
 @EnableWebMvc

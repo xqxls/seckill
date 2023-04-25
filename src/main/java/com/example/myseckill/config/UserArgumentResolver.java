@@ -18,9 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 自定义用户参数
  *
- * @author: LC
- * @date 2022/3/3 4:46 下午
- * @ClassName: UserArgumentResolver
+ * @Author: huzhuo
+ * @Date: Created in 2023/3/8 22:03
  */
 @Component
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
